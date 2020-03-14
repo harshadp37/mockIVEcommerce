@@ -37,11 +37,15 @@ module.exports.addProduct = (req, res) => {
 //Update Existing Product
 module.exports.updateProduct = (req, res) => {
     if (!req.params.id || !req.query.number) {
-        console.error('Please Provide ID of product and quantity which needs to be updated.');
-        return res.json({ success: false, message: 'Please Provide ID of product and quantity which needs to be updated.' });
+        console.error('Please Provide ID of product and number which needs to be updated.');
+        return res.json({ success: false, message: 'Please Provide ID of product and number which needs to be updated.' });
     }
     Product.findById(req.params.id, (err, product) => {
         if (err) {
+            console.error('Error while Updating Existing Product. ' + err)
+            return res.json({ success: false, message: 'Error while Updating Existing Product.' });
+        }
+        if (!product) {
             console.error('Product is Not Exists with this ID. ' + err)
             return res.json({ success: false, message: 'Product is Not Exists with this ID.' });
         }
@@ -49,9 +53,28 @@ module.exports.updateProduct = (req, res) => {
         product.save((err) => {
             if (err) {
                 console.error('Error while Updating Existing Product. ' + err)
-                return res.json({ success: false, message: 'Error while Updating Existing Product. ' });
+                return res.json({ success: false, message: 'Error while Updating Existing Product.' });
             }
-            res.json({ success: true, data: { product: product, message: 'updated successfully' } });
+            res.json({ success: true, data: { product: product, message: 'updated successfully.' } });
         })
+    })
+}
+
+//Delete Existing Product
+module.exports.deleteProduct = (req, res) => {
+    if (!req.params.id) {
+        console.error('Please Provide ID of product which needs to be deleted.');
+        return res.json({ success: false, message: 'Please Provide ID of product which needs to be deleted.' });
+    }
+    Product.findByIdAndRemove(req.params.id, (err, product) => {
+        if (err) {
+            console.error('Error while Updating Existing Product. ' + err)
+            return res.json({ success: false, message: 'Error while Updating Existing Product.' });
+        }
+        if (!product) {
+            console.error('Product is Not Exists with this ID. ' + err)
+            return res.json({ success: false, message: 'Product is Not Exists with this ID.' });
+        }
+        res.json({ success: true, data: { message: 'Product Deleted.' } });
     })
 }
