@@ -17,6 +17,10 @@ module.exports.addProduct = (req, res) => {
         console.error('Please Provide Name of Product And Quantity.')
         return res.json({ success: false, message: 'Please Provide Name of Product And Quantity.' });
     }
+    if (req.body.quantity < 0) {
+        console.error('Please Provide valid Number of Quantity. ' + req.body.quantity + ' is not a valid Quantity.')
+        return res.json({ success: false, message: 'Please Provide valid Number of Quantity. ' + req.body.quantity + ' is not a valid Quantity.' });
+    }
     const newProduct = {
         name: req.body.name,
         quantity: req.body.quantity
@@ -27,5 +31,27 @@ module.exports.addProduct = (req, res) => {
             return res.json({ success: false, message: 'Error while Adding new Product.' });
         }
         res.json({ success: true, data: { product: product } });
+    })
+}
+
+//Update Existing Product
+module.exports.updateProduct = (req, res) => {
+    if (!req.params.id || !req.query.number) {
+        console.error('Please Provide ID of product and quantity which needs to be updated.');
+        return res.json({ success: false, message: 'Please Provide ID of product and quantity which needs to be updated.' });
+    }
+    Product.findById(req.params.id, (err, product) => {
+        if (err) {
+            console.error('Product is Not Exists with this ID. ' + err)
+            return res.json({ success: false, message: 'Product is Not Exists with this ID.' });
+        }
+        product.quantity = Number.parseInt(product.quantity) + Number.parseInt(req.query.number);
+        product.save((err) => {
+            if (err) {
+                console.error('Error while Updating Existing Product. ' + err)
+                return res.json({ success: false, message: 'Error while Updating Existing Product. ' });
+            }
+            res.json({ success: true, data: { product: product, message: 'updated successfully' } });
+        })
     })
 }

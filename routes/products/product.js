@@ -8,4 +8,7 @@ router.get('/', productController.getAllProducts);
 //Add New Product
 router.post('/create', productController.addProduct);
 
+//Update Existing Product
+router.post('/:id/update_quantity', productController.updateProduct);
+
 module.exports = router;
